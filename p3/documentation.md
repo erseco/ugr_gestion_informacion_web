@@ -1,11 +1,9 @@
 # Gestión de Información en la Web - Practica 3
-## Ernesto Serrano Collado <erseco@correo.ugr.es> 74003802Z
+> Ernesto Serrano Collado <erseco@correo.ugr.es> 74003802Z
 
-### Máster Profesional en Ingeniería Informática
-### Universidad de Granada
+### Máster Profesional en Ingeniería Informática (Universidad de Granada)
 
 ## Desarrollo de un Sistema de Recuperación de Información con Lucene
-
 
 # Introducción
 
@@ -76,11 +74,10 @@ Para parsear los ficheros XML se ha utilizado la librería `etree` (The ElementT
 
 Se ha desarrollado un motor de búsqueda que mediante el micro-framwework `Flask` expone una web que nos permite realizar búsquedas de una forma sencilla e intuitiva.
 
-Interfaz:
-![alt text](images/interface1.png "Logo Title Text 1")
 
-Resultados:
-![alt text](images/results1.png "Logo Title Text 1")
+![Interfaz](images/interface1.png "Interfaz")
+
+![Resultados](images/results1.png "Resultados")
 
 
 El código está disponible en
@@ -93,18 +90,18 @@ El código está disponible en
 Para realizar la indexación hay que ejecutar el programa `index.py` con los parámetros que exigen los requisitos de la práctica, se adjunta un ejemplo de como se debería de lanzar:
 
 ```bash
-python indexer.py iniciativas08 palabras_vacias_utf8.txt index
+./indexer.py iniciativas08 palabras_vacias_utf8.txt index
 ```
 
->Si no se le especifican los comando requeridos el programa mostrará un mensaje de ayuda.
+>Si no se le especifican los parametros requeridos el programa mostrará un mensaje de ayuda.
 
 ## Motor de Búsqueda
 
 Para lanzar el motor de búsqueda hay que ejecutar el programa `search.py` con los parámetros que exigen los requisitos de la práctica, se adjunta un ejemlo de como se debería de lanzar:
 ```bash
-python search.py index
+./search.py index
 ```
->Si no se le especifican los comando requeridos el programa mostrará un mensaje de ayuda.
+>Si no se le especifican los parametros requeridos el programa mostrará un mensaje de ayuda.
 
 Una vez lanzado el programa podremos interactuar con el buscador entrando con el navegador en la url http://localhost:8080
 
