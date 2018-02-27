@@ -5,28 +5,28 @@
 
 ## Desarrollo de un Sistema de Recuperación de Información con Lucene
 
-# Introducción
+## Introducción
 
-Los objetivos de esta práctica son:
+### Los objetivos de esta práctica son:
 
 1. Conocer las partes principales que tiene un sistema de recuperación de información y qué funcionalidad tiene cada una.
 2. Implementar un sistema de recuperación de información.
 3. Emplear la biblioteca `Lucene` para facilitar dicha implementación.
 
-En esta práctica se construirá un sistema de recuperación de información empleando la biblioteca Lucene, compuesto de dos programas:
+### En esta práctica se construirá un sistema de recuperación de información empleando la biblioteca Lucene, compuesto de dos programas:
 
-1. Un indexador, el cual recibirá como argumentos la ruta de la colección documental a indexar, el fichero de palabras vacías a emplear y la ruta donde alojar los índices, y llevará a cabo la indexación, creando los índices oportunos y ficheros auxiliares necesarios para la recuperación. Esta aplicación se ejecutará en la línea de mandatos y no tendrá ningún componente gráfico. Este software realizará las tareas de tokenización, eliminación de palabras vacías y extracción de raíces antes de crear el índice.
-2. Un motor de búsqueda, que al ejecutarse recibirá como argumento la ruta donde está alojado el índice de la colección y permitirá que un usuario realice una consulta de texto y obtenga el conjunto de documentos relevantes a dicha consulta. En este caso, el programa sí será gráfico. Sobre la consulta se realizarán los mismos procesos que sobre los documentos en el indexador.
+1. Un **indexador**, el cual recibirá como argumentos la ruta de la colección documental a indexar, el fichero de palabras vacías a emplear y la ruta donde alojar los índices, y llevará a cabo la indexación, creando los índices oportunos y ficheros auxiliares necesarios para la recuperación. Esta aplicación se ejecutará en la línea de mandatos y no tendrá ningún componente gráfico. Este software realizará las tareas de tokenización, eliminación de palabras vacías y extracción de raíces antes de crear el índice.
+2. Un **motor de búsqueda**, que al ejecutarse recibirá como argumento la ruta donde está alojado el índice de la colección y permitirá que un usuario realice una consulta de texto y obtenga el conjunto de documentos relevantes a dicha consulta. En este caso, el programa sí será gráfico. Sobre la consulta se realizarán los mismos procesos que sobre los documentos en el indexador.
 
-# Desarrollo
+## Desarrollo
 
 Para la realización de esta práctica se ha optado por utilizar el lenguaje de programación `Python` mediante la librería [`PyLucene`](http://lucene.apache.org/pylucene/). Dicha librería lo que hace es mediante `jcc` crear un envoltorio *(wrapper)* de `Lucene` que puede ser invocado desde `Python`. La librería `PyLucene` no es un desarrollo tan activo y con tanta documentación como el propio `Lucene`por lo que para usar muchas cosas se ha tenido que indagar en el propio código fuente y a base de prueba y error.
 
-## Instalación de PyLucene
+### Instalación de PyLucene
 
 Para el despliegue se ha provisionado una máquina Ubuntu 16.04 LTS en AWS.
 
-### Instalación de dependencias
+#### Instalación de dependencias
 ```bash
 sudo apt-get update
 sudo apt-get install -y ant g++ python-dev python-setuptools python-pip default-jdk-headless
@@ -34,13 +34,13 @@ sudo pip install --upgrade pip
 sudo pip install setuptools --upgrade
 ```
 
-### Descarga y extracción de `PyLucene`
+#### Descarga y extracción de `PyLucene`
 ```bash
 wget http://apache.rediris.es/lucene/pylucene/pylucene-4.10.1-1-src.tar.gz
 tar -zxvf pylucene-4.10.1-1-src.tar.gz
 ```
 
-### Compilación e instalación de `jcc`
+#### Compilación e instalación de `jcc`
 ```bash
 cd pylucene-4.10.1-1/jcc
 sed -i s/java-7-openjdk-amd64/java-8-openjdk-amd64/ setup.py
@@ -49,7 +49,7 @@ sudo python setup.py install
 cd ..
 ```
 
-### Edición del `Makefile` de `PyLucene`
+#### Edición del `Makefile` de `PyLucene`
 ```
 # Linux     (Ubuntu 11.10 64-bit, Python 2.7.2, OpenJDK 1.7, setuptools 0.6.16)
 # Be sure to also set JDK['linux2'] in jcc's setup.py to the JAVA_HOME value
@@ -61,13 +61,13 @@ JCC=$(PYTHON) -m jcc --shared
 NUM_FILES=8
 ```
 
-### Compilación e instalación de `PyLucene`
+#### Compilación e instalación de `PyLucene`
 ```bash
 make
 sudo make install
 ```
 
-## Desarrollo de los programas requeridos
+### Desarrollo de los programas requeridos
 
 Se ha desarrollado un indexador básico utilizando la clase `SpanishAnalyzer`, el mayor problema encontrado a la hora de utilizar dicha clase ha sido para indicarle la lista de palabras a ignorar, ya que esperaba un tipo de dato especial, tras muchas pruebas se ha resuelto utilizando la clase `CharArraySet`.
 Para parsear los ficheros XML se ha utilizado la librería `etree` [The ElementTree XML API](https://docs.python.org/2/library/xml.etree.elementtree.html) hacinedo uso de XPath para facilitar el extraer elementos del arbol DOM
@@ -83,9 +83,9 @@ Se ha desarrollado un motor de búsqueda que mediante el micro-framwework `Flask
 El código está disponible en
 [GitHub](https://github.com/erseco/ugr_gestion_informacion_web/tree/master/p3/).
 
-# Manual
+## Manual
 
-## Indexador
+### Indexador
 
 Para realizar la indexación hay que ejecutar el programa `index.py` con los parámetros que exigen los requisitos de la práctica, se adjunta un ejemplo de como se debería de lanzar:
 
@@ -95,7 +95,7 @@ Para realizar la indexación hay que ejecutar el programa `index.py` con los par
 
 >Si no se le especifican los parametros requeridos el programa mostrará un mensaje de ayuda.
 
-## Motor de Búsqueda
+### Motor de Búsqueda
 
 Para lanzar el motor de búsqueda hay que ejecutar el programa `search.py` con los parámetros que exigen los requisitos de la práctica, se adjunta un ejemlo de como se debería de lanzar:
 ```bash
@@ -105,15 +105,15 @@ Para lanzar el motor de búsqueda hay que ejecutar el programa `search.py` con l
 
 Una vez lanzado el programa podremos interactuar con el buscador entrando con el navegador en la url http://localhost:8080
 
-# Bibliografía
+## Bibliografía
 - Documentación de Lucene: http://lucene.apache.org/
 - Documentación de PyLucene: http://lucene.apache.org/pylucene/
 - Documentación de XML Etree: https://docs.python.org/2/library/xml.etree.elementtree.html
 - StackOverflow: https://stackoverflow.com/
 
-# Anexos
+## Anexos
 
-## Código del indexador
+### Código del indexador
 
 ```python
 #!/usr/bin/env python
@@ -214,7 +214,7 @@ if __name__ == "__main__":
 
 ```
 
-## Código del motor de búsqueda
+### Código del motor de búsqueda
 ```python
 #!/usr/bin/env python
 
