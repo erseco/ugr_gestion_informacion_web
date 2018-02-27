@@ -22,7 +22,7 @@ En esta práctica se construirá un sistema de recuperación de información
 
 Para la realización de esta práctica se ha optado por utilizar el lenguaje de programación `Python` mediante la librería [`PyLucene`](http://lucene.apache.org/pylucene/). Dicha librería lo que hace es mediante `jcc` crear un envoltorio *(wrapper)* de `Lucene` que puede ser invocado desde `Python`. La librería `PyLucene` no es un desarrollo tan activo y con tanta documentación como el propio `Lucene`por lo que para usar muchas cosas se ha tenido que indagar en el propio código fuente y a base de prueba y error.
 
-## Instalación de PyLucene
+## Instalación de PyLucene
 
 Para el despliegue se ha provisionado una máquina Ubuntu 16.04 LTS en AWS.
 
