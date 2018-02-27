@@ -20,7 +20,7 @@ En esta práctica se construirá un sistema de recuperación de información
 
 # Desarrollo
 
-Para la realización de esta práctica se ha optado por utilizar el lenguaje de programación `Python` mediante la librería `PyLucene` [http://lucene.apache.org/pylucene/]. Dicha librería lo que hace es mediante `jcc` crear un envoltorio *(wrapper)* de `Lucene` que puede ser invocado desde `Python`. La librería `PyLucene` no es un desarrollo tan activo y con tanta documentación como el propio `Lucene`por lo que para usar muchas cosas se ha tenido que indagar en el propio código fuente y a base de prueba y error.
+Para la realización de esta práctica se ha optado por utilizar el lenguaje de programación `Python` mediante la librería [`PyLucene`](http://lucene.apache.org/pylucene/). Dicha librería lo que hace es mediante `jcc` crear un envoltorio *(wrapper)* de `Lucene` que puede ser invocado desde `Python`. La librería `PyLucene` no es un desarrollo tan activo y con tanta documentación como el propio `Lucene`por lo que para usar muchas cosas se ha tenido que indagar en el propio código fuente y a base de prueba y error.
 
 ## Instalación de PyLucene
 
@@ -70,7 +70,7 @@ sudo make install
 ## Desarrollo de los programas requeridos
 
 Se ha desarrollado un indexador básico utilizando la clase `SpanishAnalyzer`, el mayor problema encontrado a la hora de utilizar dicha clase ha sido para indicarle la lista de palabras a ignorar, ya que esperaba un tipo de dato especial, tras muchas pruebas se ha resuelto utilizando la clase `CharArraySet`.
-Para parsear los ficheros XML se ha utilizado la librería `etree` (The ElementTree XML API) https://docs.python.org/2/library/xml.etree.elementtree.html hacinedo uso de XPath para facilitar el extraer elementos del arbol DOM
+Para parsear los ficheros XML se ha utilizado la librería `etree` [The ElementTree XML API](https://docs.python.org/2/library/xml.etree.elementtree.html) hacinedo uso de XPath para facilitar el extraer elementos del arbol DOM
 
 Se ha desarrollado un motor de búsqueda que mediante el micro-framwework `Flask` expone una web que nos permite realizar búsquedas de una forma sencilla e intuitiva.
 
