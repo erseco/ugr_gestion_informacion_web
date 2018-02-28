@@ -1,0 +1,24 @@
+\chapter{Introducción}
+
+\subsubsection{En esta práctica se construirá un sistema de recuperación
+de información empleando la biblioteca Lucene, compuesto de dos
+programas:}
+
+\begin{enumerate}
+\item{
+  Un \textbf{indexador}, el cual recibirá como argumentos la ruta de la
+  colección documental a indexar, el fichero de palabras vacías a
+  emplear y la ruta donde alojar los índices, y llevará a cabo la
+  indexación, creando los índices oportunos y ficheros auxiliares
+  necesarios para la recuperación. Esta aplicación se ejecutará en la
+  línea de mandatos y no tendrá ningún componente gráfico. Este software
+  realizará las tareas de tokenización, eliminación de palabras vacías y
+  extracción de raíces antes de crear el índice.}
+\item
+  Un \textbf{motor de búsqueda}, que al ejecutarse recibirá como
+  argumento la ruta donde está alojado el índice de la colección y
+  permitirá que un usuario realice una consulta de texto y obtenga el
+  conjunto de documentos relevantes a dicha consulta. En este caso, el
+  programa sí será gráfico. Sobre la consulta se realizarán los mismos
+  procesos que sobre los documentos en el indexador.
+\end{enumerate}

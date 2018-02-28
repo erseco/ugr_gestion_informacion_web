@@ -7,7 +7,7 @@ __license__     = "GPL"
 __version__     = "1.0.1"
 __email__       = "erseco@correo.ugr.es"
 
-from flask import Flask, flash, render_template, request, redirect
+from flask import Flask, flash, render_template, request, redirect, send_from_directory
 
 
 import sys
@@ -23,7 +23,6 @@ from org.apache.lucene.queryparser.classic import QueryParser
 from org.apache.lucene.store import SimpleFSDirectory
 from org.apache.lucene.util import Version
 
-from flask_table import Table, Col, LinkCol
 
 from wtforms import Form, StringField, SelectField, validators
 
@@ -48,16 +47,17 @@ class SearchForm(Form):
     # select = SelectField('Search for music:', choices=choices)
     search = StringField('')
 
-class Results(Table):
-    filename = Col('Filename')
-    text = Col('Text')
-    # link = LinkCol('Link', 'edit', url_kwargs=dict(id='filename'))
-
 # Get some objects
 class Row(object):
-    def __init__(self, filename, text):
-        self.filename = filename
+    def __init__(self, score, tipo_sesion, organo, presidente, fecha, tipo_epigrafe, text, filename):
+        self.score = score
+        self.tipo_sesion = tipo_sesion
+        self.organo= organo
+        self.presidente = presidente
+        self.fecha= fecha
+        self.tipo_epigrafe = tipo_epigrafe
         self.text = text
+        self.filename = filename
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -67,6 +67,9 @@ def index():
 
     return render_template('index.html', form=search)
 
+@app.route('/<path:path>')
+def send_js(path):
+    return send_from_directory('', path)
 
 @app.route('/results')
 def search_results(search):
@@ -75,11 +78,7 @@ def search_results(search):
 
     print "buscando:"+search_string
 
-#     if search.data['search'] == '':
-#         qry = db_session.query(Album)
-#         results = qry.all()
     lucene.initVM()
-    # analyzer = StandardAnalyzer(Version.LUCENE_4_10_1)
     analyzer = SpanishAnalyzer()
     reader = IndexReader.open(SimpleFSDirectory(File(indexDirectory)))
     searcher = IndexSearcher(reader)
@@ -99,8 +98,24 @@ def search_results(search):
         items = []
         for hit in hits.scoreDocs:
             # print hit.score, hit.doc, hit.toString()
+            if len(items) > 10:
+                flash('Returning only first 10 results')
+                break
+
             doc = searcher.doc(hit.doc)
-            items.append(Row(doc.get("filename"), doc.get("text")))
+            items.append(
+                Row(
+                    hit.score,
+                    doc.get("tipo_sesion"),
+                    doc.get("organo"),
+                    doc.get("presidente"),
+                    doc.get("dia")+"/"+doc.get("mes")+"/"+doc.get("anio"),
+                    doc.get("tipo_epigrafe"),
+                    doc.get("text").replace(search_string, '<span class="highlightme">'+search_string+'</span>'),
+                    # doc.get("filename") # + "<a href='#'>hola"
+                    '<a href="'+doc.get("filename")+'">'+doc.get("filename")+'</a>'
+                    )
+                )
         #     print hit.score, hit.doc, hit.toString()
         #     doc = searcher.doc(hit.doc)
         #     # print doc.get("text").encode("utf-8")
@@ -108,9 +123,7 @@ def search_results(search):
 
 
         # display results
-        table = Results(items)
-        table.border = True
-        return render_template('index.html', form=search, table=table)
+        return render_template('index.html', form=search, items=items, search_string=search_string)
 
 if __name__ == '__main__':
     import os

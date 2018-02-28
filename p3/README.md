@@ -54,7 +54,7 @@ sudo pip install Flask-WTF flask-table
 
 ### Redirect 8080 to 80
 ```bash
-iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
+sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
 ```
 
 ## Using the programs

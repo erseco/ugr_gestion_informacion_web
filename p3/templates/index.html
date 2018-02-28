@@ -1,30 +1,83 @@
 <doctype html>
 <head>
     <title>Lucene Search Test</title>
-</head>
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<script
+  src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+  integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+  crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<style type="text/css">
+td {
+  vertical-align: top;
+}
+.highlightme { background-color:#FFFF00; }
+</style>
+
+</head>
+<body>
+  <div class="container">
+  <div class="row">
 <h2>Lucene Search Test</h2>
 
+{% from "_formhelpers.html" import render_field %}
+<form method=post class="form-inline">
+<div class="form-group">
+    {{ render_field(form.search, class_="form-control", placeholder="Text to search") }}
+
+</div>
+<input type=submit class="btn btn-primary" value=Search>
+</form>
+</div>
 {% with messages = get_flashed_messages() %}
   {% if messages %}
-    <ul class=flashes>
+
+<div class="col-md-6 alert alert-warning" role="alert">
+   <ul class=flashes>
     {% for message in messages %}
-      <li>{{ message }}</li>
+
+
+      <li>
+      {{ message }}
+    </li>
+
+
     {% endfor %}
+  </div>
+
     </ul>
   {% endif %}
 {% endwith %}
 
-{% from "_formhelpers.html" import render_field %}
-<form method=post>
-  <dl>
+</div>
 
-    {{ render_field(form.search) }}
-  </dl>
-  <p><input type=submit value=Search>
-</form>
-
-{% if table %}
+{% if items %}
 <title>Search Results - Lucene Database</title>
-{{ table }}
+<table class="table table-bordered table-hover ">
+<tr>
+  <th>Info</th>
+  <th>Text</th>
+</tr>
+{% for item in items %}
+<tr>
+ <td nowrap>
+
+  <strong>Score:</strong> {{item.score}}<br />
+  <strong>Tipo sesion:</strong> {{item.tipo_sesion}}<br />
+  <strong>Organo:</strong> {{item.organo}}<br />
+  <strong>Presidente:</strong> {{item.presidente}}<br />
+  <strong>Fecha:</strong> {{item.fecha}}<br />
+  <strong>Tipo epigrafe:</strong> {{item.tipo_epigrafe}}<br />
+  <strong>Fichero:</strong> {{item.filename|safe}}
+ </td>
+ <td>{{item.text|safe}}</td>
+</tr>
+{% endfor %}
+</table>
+
+
 {% endif %}
+</body>
