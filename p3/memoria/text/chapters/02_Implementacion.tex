@@ -13,7 +13,7 @@ fuente y a base de prueba y error.
 
 \subsection{Instalación de PyLucene}
 
-Para el despliegue se ha provisionado una máquina Ubuntu 16.04 LTS en AWS.
+Para el despliegue se ha provisionado una máquina Ubuntu 16.04 LTS en \textbf{AWS}. Para la compilación de \textit{PyLucene} ha sido necesario una máquina bastante potente con al menos 2GB de memoria RAM, pero una vez compilado \textit{PyLucene} se ha podido cambiar el tipo de instancia a una t2.micro con solo 0.5GB de RAM.
 
 \subsubsection{Instalación de dependencias}
 \begin{lstlisting}
@@ -59,12 +59,27 @@ sudo make install
 
 \subsection{Desarrollo de los programas requeridos}
 
+\subsubsection{Indexador}
+
 Se ha desarrollado un indexador básico utilizando la clase
 \texttt{SpanishAnalyzer}, el mayor problema encontrado a la hora de
 utilizar dicha clase ha sido para indicarle la lista de palabras a
-ignorar, ya que esperaba un tipo de dato especial, tras muchas pruebas se ha resuelto utilizando la clase \texttt{CharArraySet}. Para parsear los ficheros XML se ha utilizado la librería \texttt{etree} \href{https://docs.python.org/2/library/xml.etree.elementtree.html}{The ElementTree XML API} hacinedo uso de XPath para facilitar el extraer elementos del arbol DOM.
+ignorar, ya que esperaba un tipo de dato especial, tras muchas pruebas se ha resuelto utilizando la clase \texttt{CharArraySet}. 
 
-Se ha desarrollado un motor de búsqueda que mediante el micro framwework \texttt{Flask} expone una web que nos permite realizar búsquedas de una forma sencilla e intuitiva como se puede ver en las siguientes capturas.
+Para parsear los ficheros XML se ha utilizado la librería \texttt{etree} \href{https://docs.python.org/2/library/xml.etree.elementtree.html}{The ElementTree XML API} haciendo uso de XPath para facilitar el extraer elementos del arbol DOM.
+
+Se ha mejorado el ejemplo proporcionado agregando más elementos de los XML como pueden ser: \textbf{tipo sesion}, \textbf{organo}
+\textbf{presidente}, \textbf{fecha}, y \textbf{tipo epigrafe}.
+
+
+
+\subsubsection{Motor de búsqueda}
+
+Se ha desarrollado un motor de búsqueda que mediante el micro framework \texttt{Flask} expone una web que nos permite realizar búsquedas de una forma sencilla e intuitiva como se puede ver en las siguientes capturas.
+
+Se ha utilizado \texttt{Bootstrap} para darle un mejor aspecto visual, además se ha agregado una funcionalidad para resaltar en el texto la cadena buscada.
+
+En el caso de que se devuelvan muchos resultado solo se muestran los 10 primeros para evitar sobrecargar al servidor.
 
 \begin{figure}
 \centering
