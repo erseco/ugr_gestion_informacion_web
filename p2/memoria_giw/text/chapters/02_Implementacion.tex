@@ -1,0 +1,490 @@
+\chapter{Implementación}
+
+\section{Introducción}
+\label{sec:intro}
+
+Para la extracción de datos se ha utilizado, como se ha mencionado anteriormente, el plugin de recuperación de datos de Twitter para Gephi, introduciendo como cadenas de búsqueda las siguientes cadenas:
+
+\begin{itemize}
+	\item antonio mercero
+	\item farmacia de guardia
+	\item verano azul
+	\item chanquete
+\end{itemize}
+
+\section{Estructura de la red}
+
+En la red extraída los nodos son los usuarios (con información adicional como su número de seguidores, de usuarios que siguen, tuits o tuits marcados como favoritos) y las aristas son la interacción entre usuarios (mención, respuesta o retuit), por tanto se trata de una red dirigida.
+\\ \\
+La red original consta de 3693 nodos y 5845 aristas. Aplicando un primer filtro de componente gigante para deshacerse de grupos pequeños que no interaccionan con el grupo más grande, pasamos a 2627 nodos y 4720 aristas (el 71,13\% y 80,75\% respectivamente con respecto a la red social original).
+\\ \\
+A continuación se ha aplicado un filtro de \textit{k-core} con grado 3 para seguir simplificándola pues seguía siendo todavía demasiado grande y difícil de visualizar. Aplicando este filtro pasamos a 599 nodos y 1697 aristas (el 16,22\% y 29,03\% respectivamente con respecto a la red social original).
+
+\section{Valores de medidas de análisis}
+\label{sec:medidas}
+
+\subsection{Red original}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm]{../images/original-graph}
+	\caption{Grafo de la red original}
+\end{figure}
+
+\begin{table}[H]
+	\centering
+	\caption{Valores de las medidas de análisis de la red original}
+	\label{tab:medidas-original}
+	\begin{tabular}{| l | l |}
+		\hline
+		Medida                							& Valor          \\ 
+		\hline
+		Número de nodos ($N$)           					& 3693           \\
+		Número de enlaces ($L$)                   		& 5845           \\
+		Densidad ($D$)                   				& 0         \\
+		Grado medio ($k$)                   				& 1,583          \\
+		Diámetro ($d_{max}$)             				& 4              \\
+		Distancia media ($d$)                   			& 1,642          \\
+		Coeficiente clustering medio($C$)              	& 0,074          \\
+		Componentes conexas   							& 9            \\ 
+		Nodos componente gigante($N_{gigante}$)        	& 2627 (71,13\%) \\ 
+		Enlaces componente gigante($L_{gigante}$)       & 4720 (80,75\%) \\ 
+		\hline
+	\end{tabular}
+\end{table}
+
+La densidad de la red original es muy pequeña (0). Vemos que hay casi el mismo número de nodos que de enlaces, ya que muchos usuarios solo mencionan el suceso sin realizar ninguna interacción con nadie.
+\\ \\
+La distancia media de un nodo a otro es muy pequeña lo cual es lógico al haber nodos que están conectados con un enorme número de usuarios. Además, el diámetro es de tan solo 4, por lo que, como muchos en 4 pasos, se podría pasar de un nodo a cualquier otro.
+\\ \\
+El coeficiente de clustering medio es muy bajo. Y es que como podemos ver hay hasta 9 componentes conexas lo cual puede explicar este valor tan bajo. En muchos casos es debido a usuarios que responden a otros usando el \textit{hash tag} sin mencionar a ningún otro usuario.
+
+\subsection{Red filtrada}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm]{../images/filtered-graph}
+	\caption{Grafo de la red filtrada}
+\end{figure}
+
+\begin{table}[H]
+	\centering
+	\caption{Valores de las medidas de análisis de la red filtrada}
+	\label{tab:medidas-filtrada}
+	\begin{tabular}{| l | l |}
+		\hline
+		Medida                							& Valor          \\ 
+		\hline
+		Número de nodos ($N$)           					& 599           \\
+		Número de enlaces ($L$)                   		& 1697           \\
+		Densidad ($D$)                   				& 0,005         \\
+		Grado medio ($k$)                   				& 2,833          \\
+		Diámetro ($d_{max}$)             				& 3              \\
+		Distancia media ($d$)                   			& 1,431          \\
+		Coeficiente clustering medio($C$)               & 0,003             \\
+		Componentes conexas   					   		& 1            \\ 
+		\hline
+	\end{tabular}
+\end{table}
+
+La densidad sigue siendo pequeña pero es bastante mayor que la de la red original ya que ha pasado de 0 a 0,005.
+\\ \\
+La distancia varía de la red original a la filtrada, aumentando en 0,211, mientras que el diámetro se ha reducido a 3.
+\\ \\
+El coeficiente de \textit{clustering} sigue siendo bastante pequeño, lo cual puede hacer difícil la detección de comunidades para un número de comunidades pequeña.
+\\ \\
+En este caso, al haberse filtrado la red previamente usando la componente gigante, el número de componentes conexas es 1, como no podría ser de otra manera.
+
+\section{Propiedades de la red}
+
+A continuación se describirán propiedades de la red ya filtrada, que será sobre la que se haga la detección de comunidades y visualización.
+
+\subsection{Distribución de grados}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm] {../images/degree-distribution}
+	\caption{Distribución de grados para la red filtrada}
+	\label{fig:degree-distribution}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm]{../images/in-degree-distribution}
+	\caption{Distribución de grados de entrada para la red filtrada}
+	\label{fig:in-degree-distribution}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm]{../images/out-degree-distribution}
+	\caption{Distribución de grados de salida para la red filtrada}
+	\label{fig:out-degree-distribution}
+\end{figure}
+
+Se puede observar como se cumple la ley de la potencia: $ P(k) \sim k^{-\gamma} $ y es que la mayoría de los nodos tienen pocos enlaces pero hay unos cuantos \textit{hubs} que tienen muchos, y posteriormente, al visualizarlo se verá una forma de estrella alrededor de estos. Por tanto podríamos decir que la red es libre de escala.
+
+\subsection{Distribución de distancias}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm]{../images/eccentricity-distribution}
+	\caption{Distribución de excentricidad para la red filtrada}
+	\label{fig:eccentricity-distribution}
+\end{figure}
+
+En este gráfico (Figura \ref{fig:eccentricity-distribution}) vemos que hay bastantes nodos con distancia 0, esto es porque en el grafo hay nodos con grado de salida 0 y al ser una red dirigida es imposible llegar a ellos.
+\\ \\
+Recordamos, el diámetro de la red era 3 y la distancia media 1,431. En la distribución vemos como a mayor sea el valor de distancia, menor es el número de nodos. Esto es consecuencia de cumplir la propiedad de mundo pequeño. 
+
+\subsection{Distribución de coeficientes de clustering}
+
+El coeficiente de clustering de la red social es bastante bajo, de hecho en la red filtrada da un valor de 0 y en la red sin filtrar 0,074.
+\\ \\
+
+\section{Medidas de centralidad para nodos principales}
+\label{sec:hubs}
+
+En esta sección se va a intentar detectar a los actores principales dentro de la red social utilizando varias medidas: grado, intermediación, cercanía y vector propio.
+\\ \\
+Se presentarán en tablas con los 10 primeros actores y el valor que tienen para cada medida.
+
+\begin{table}[H]
+	\centering
+	\caption{Actores principales según el grado}
+	\label{tab:actores-principales-grado}
+	\begin{tabular}{| l | l l l |}
+		\hline
+		\# & \textit{degree}       & \textit{in-degree}     & \textit{out-degree}   \\
+		\hline
+		1  & [232] scuderiaferrari & [232] scuderiaferrari  & [33] cheekycorini     \\
+		2  & [230] f1              & [229] f1               & [20] stevestevens47   \\
+		3  & [130] mercedesamgf1   & [127] mercedesamgf1    & [19] eko\_sap56963457 \\
+		4  & [96] valtteribottas   & [96] valtteribottas    & [18] alejand20099936  \\
+		5  & [86] lewishamilton    & [86] lewishamilton     & [17] americoscatena   \\
+		6  & [47] ausgrandprix     & [47] ausgrandprix      & [14] juanbernalm      \\
+		7  & [43] sebvettelnews    & [43] sebvettelnews     & [12] fishtrenado      \\
+		8  & [38] oconesteban      & [38] oconesteban       & [12] mireillebrigit   \\
+		9  & [35] skysportf1hd     & [35] forceindiaf1      & [11] f1\_images       \\
+		10 & [35] forceindiaf1     & [32] skysportf1hd      & [11] wakeupmob        \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\caption{Actores principales según la intermediación y cercanía.}
+	\label{tab:actores-principales-intermediacion-cercania}
+	\begin{tabular}{| l | l l |}
+		\hline
+		\# & \textit{betweeness centrality} & \textit{closness centrality} \\
+		\hline 
+		1  & [142] mercedesamgf1            & [1] mercedesamgf1            \\
+		2  & [73,833] f1                    & [1] f1                       \\
+		3  & [73,5] skysportf1hd            & [1] skysportf1hd             \\
+		4  & [13] motorlat                  & [1] motorlat                 \\
+		5  & [9] c4f1                       & [1] c4f1                     \\
+		6  & [8] saetta\_mcqueen            & [1] alayzell20297            \\
+		7  & [7] maui27575                  & [1] f1writers                \\
+		8  & [6,333] graftechweb            & [1] alexs1man                \\
+		9  & [6] motorsport\_it             & [1] dan\_rigsby              \\
+		10 & [6] guilialabo                 & [1] vettel\_formel1          \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\caption{Actores principales según el vector propio y \textit{pagerank}}
+	\label{tab:actores-principales-vector-propio}
+	\begin{tabular}{| l | l l |}
+		\hline
+		\# & \textit{eigen centrality} & \textit{pagerank}       \\
+		\hline 
+		1  & [1] scuderiaferrari       & [0,084] scuderiaferrari \\
+		2  & [0,723] f1                & [0,043] f1              \\
+		3  & [0,542] mercedesamgf1     & [0,030] mercedesamgf1   \\
+		4  & [0,451] valteribottas     & [0,028] redbullracing   \\
+		5  & [0,421] lewishamilton     & [0,025] valtteribottas  \\
+		6  & [0,153] oconesteban       & [0,024] lewishamilton   \\
+		7  & [0,140] ausgrandprix      & [0,022] gianludale27    \\
+		8  & [0,130] sebvettelnews     & [0,020] enricotornello  \\
+		9  & [0,130] danielricciardo   & [0,019] motorsport      \\
+		10 & [0,119] redbullracing     & [0,014] a3formula1      \\
+		\hline
+	\end{tabular}
+\end{table}
+
+En las Tablas \ref{tab:actores-principales-grado} y \ref{tab:actores-principales-intermediacion-cercania} podemos ver como dos medidas no nos van a servir para detectar a nuestros actores principales:
+
+\begin{itemize}
+	\item \textit{out-degree}: Representa a los usuarios que más veces han interaccionado. Pueden haber mencionado muchas veces, pero lo que buscamos son los mencionados, no los que mencionan.
+	\item \textit{closness centrality}: Los 220 primeros nodos tienen valor 1 por lo que no es un dato que nos sirva para detectar a los actores principales.
+\end{itemize}
+
+Además el grado (\textit{degree}) y el grado de entrada (\textit{in-degree}) se parecen mucho. Vemos que, excepto \textit{skysportf1hd} (cuenta oficial de F1 de un canal televisivo), en el resto de los dos primeros coinciden. Esto es porque han sido mencionados pero no han mencionado a nadie (o no se ha recogido el tuit por haberse generado entre las horas que se recogió la información).
+\\ \\
+No obstante, antes que considerar el grado para medir la centralidad, sería más apropiado utilizar el vector propio (\textit{eigen centrality}) o el \textit{pagerank} (Tabla \ref{tab:actores-principales-vector-propio}) pues agrega otra información importante y es que pondera las conexiones según lo central que sea el nodo con el que se conecta. De esta forma se mediría la calidad y no la cantidad de enlaces.
+
+\section{Comunidades}
+
+Se ha utilizado Gephi para detectar comunidades dando una resolución de 1,5 y obteniendo 11 comunidades y un coeficiente de 0,727, el cual supera la barrera de 0,3 para considerarlo aceptable.
+\\ \\
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm]{../images/communities-size-distribution}
+	\caption{Distribución de comunidades en la red filtrada}
+	\label{fig:communities-size-distribution}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm]{../images/modularity-class}
+	\caption{Grafo de comunidades en la red filtrada}
+	\label{fig:modularity-class}
+\end{figure}
+
+
+Para diferenciar los grupos he buscado las distintas cuentas de escuderías y pilotos:
+
+\begin{itemize}
+	\item Escudería Mercedes:
+	\begin{itemize}
+		\item \textit{@mercedesamgf1}: 2
+		\item \textit{@lewishamilton}: 2
+		\item \textit{@valtteribottas}: 2
+	\end{itemize}
+
+	\item Escudería Ferrari:
+	\begin{itemize}
+		\item \textit{@scuderiaferrari}: 3
+	\end{itemize}
+
+	\item Escudería Red Bull:
+	\begin{itemize}
+		\item \textit{@redbullracing}: 4
+		\item \textit{@danielricciardo}: 4
+		\item \textit{@max33verstappen}: 4
+	\end{itemize}
+	
+	\item Escudería Force India:
+	\begin{itemize}
+		\item \textit{@forceindiaf1}: 5
+		\item \textit{@schecoperez}: 7
+		\item \textit{@oconesteban}: 5
+		\item \textit{@thevijaymallya}: 5
+	\end{itemize}
+
+	\item Escudería Williams:
+	\begin{itemize}
+		\item \textit{@williamsracing}: 5
+		\item \textit{@massafelipe19}: 5
+		\item \textit{@lance\_stroll}: 0
+	\end{itemize}
+
+	\item Escudería McLaren:
+	\begin{itemize}
+		\item \textit{@mclarenf1}: 0
+		\item \textit{@alo\_oficial}: 2
+		\item \textit{@svandoorne}: 0
+	\end{itemize}
+
+	\item Escudería Toro Rosso:
+	\begin{itemize}
+		\item \textit{@tororossospy}: 5
+		\item \textit{@carlossainz55}: 5
+		\item \textit{@kvyatofficial}: 5
+	\end{itemize}
+
+	\item Escudería Haas:
+	\begin{itemize}
+		\item \textit{@haasf1team}: 5
+		\item \textit{@rgrosjean}: 0
+		\item \textit{@kevinmagnussen}: 0
+	\end{itemize}
+
+	\item Escudería Renault:
+	\begin{itemize}
+		\item \textit{@renaultsportf1}: 5
+		\item \textit{@hulkhulkenberg}: 5
+		\item \textit{@jolyonpalmer}: 0
+	\end{itemize}
+
+	\item Escudería Sauber:
+	\begin{itemize}
+		\item \textit{@sauberf1team}: 5
+		\item \textit{@ericsson\_marcus}: 5
+		\item \textit{@anto\_giovinazzi}: 5
+	\end{itemize}
+\end{itemize} 
+
+Se ve que las tres principales escuderías están en tres comunidades distintas (Mercedes la 2, Ferrari la 3 y Red Bull la 4) mientras que el resto de escuderías se encuentran mayoritariamente en la misma comunidad (la 5). Con algunas excepciones entre las que se pueden destacar a:
+
+\begin{itemize}
+	\item Fernando Alonso: que se encuentra en la misma comunidad que Mercedes, posiblemente porque en verano se rumoreó que cambiaría a este equipo donde podría optar a volver a ser campeón del mundo y tras problemas en su coche actual tuvo que abandonar la carrera.
+	\item Sergio ``Checo'' Pérez: Único piloto mexicano de la plantilla. Los mexicanos tienen fama de ser muy fanáticos y se encuentra en un grupo independiente con usuarios mayoritariamente mexicanos (Figura \ref{fig:comunidad-perez}).
+\end{itemize}
+ 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=14cm]{img/comunidad-perez}
+	\caption{Comunidad alrededor del piloto mexicano Checo Pérez}
+	\label{fig:comunidad-perez}
+\end{figure}
+
+\section{Visualización}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=14cm]{img/fruchterman-reingold}
+	\caption{Visualización utilizando el algoritmo de Fruchterman Reingold}
+	\label{fig:fruchterman-reingold}
+\end{figure}
+
+Se han probado los dos algoritmos principales para visualizar las redes (de distribución guiados por fuerzas), en primer lugar el de Fruchterman Reingold usando el número de seguidores para el tamaño del nodo y la comunidad a la que pertenece para el color (Figura \ref{fig:fruchterman-reingold}).
+	
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=14cm]{img/kamada-kawai}
+	\caption{Visualización utilizando el algoritmo de Kamada Kawai}
+	\label{fig:kamada-kawai}
+\end{figure}
+
+También se ha probado el de Kamada Kawai (\textit{Force Atlas 2} en Gephi) usando el número de seguidores para el tamaño del nodo y la comunidad a la que pertenece para el color (Figura \ref{fig:kamada-kawai}).
+\\ \\
+Viendo sendas visualizaciones, me parece que aporta más la segunda. Separa muy bien dos comunidades que se alejan bastante del núcleo y dentro de éste la mayoría de los nodos de una misma comunidad están en el centro, excepto los más centrales donde se mezclan de varias comunidades (tal vez porque podrían pertenecer perfectamente a cualquiera).
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=14cm]{img/eigenvector}
+	\caption{Visualización utilizando el algoritmo de Kamada Kawai usando el \textit{eigenvector} para colorear los nodos}
+	\label{fig:eigenvector}
+\end{figure}
+
+Para ver más claramente cuáles son los actores principales (en la sección \ref{sec:hubs} observamos que lo mejor era usar el vector propio), y tras ya haber analizado las comunidades, se va a pasar a cambiar el tamaño para que muestre el vector propio (Figura \ref{fig:eigenvector}) en lugar del número de seguidores.
+\\ \\
+Los actores principales son:
+
+\begin{itemize}
+	\item \textit{@f1}: La cuenta oficial de la Fórmula 1. Lo cuál era de esperar. Además es mencionada por todas las comunidades que se han detectado (Figura \ref{fig:f1-mentions}).
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm]{img/f1-mentions}
+	\caption{Usuarios que mencionan a la cuenta @f1}
+	\label{fig:f1-mentions}
+\end{figure}
+
+\begin{itemize}
+	\item \textit{@scuderiaferrari}: La escudería que ganó la carrera, mencionada por todos los medios de noticias y muchísimos aficionados (además de los que ya tiene). También es mencionada por todas las comunidades detectadas (Figura \ref{fig:scuderiaferrari-mentions}).
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm]{img/scuderiaferrari-mentions}
+	\caption{Usuarios que mencionan a la cuenta @scuderiaferrari}
+	\label{fig:scuderiaferrari-mentions}
+\end{figure}
+
+\begin{itemize}	
+	\item \textit{@mercedesamgf1}, \textit{@lewishamilton} y \textit{@valtteribottas}: Los grandes derrotados. Un fallo en la estrategia del equipo privó de la victoria a Hamilton. Son también mencionados por todas las comunidades, pero en una proporción mucho menor a las dos cuentas anteriores (Figuras \ref{fig:mercedesamgf1-mentions}, \ref{fig:lewishamilton-mentions} y \ref{fig:valtteribottas-mentions}).
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=10cm]{img/mercedesamgf1-mentions}
+	\caption{Usuarios que mencionan a la cuenta @mercedesamgf1}
+	\label{fig:mercedesamgf1-mentions}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=10cm]{img/lewishamilton-mentions}
+	\caption{Usuarios que mencionan a la cuenta @lewishamilton}
+	\label{fig:lewishamilton-mentions}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=10cm]{img/valtteribottas-mentions}
+	\caption{Usuarios que mencionan a la cuenta @valtteribottas}
+	\label{fig:valtteribottas-mentions}
+\end{figure}
+
+\begin{itemize}	
+	\item \textit{@sebvettelnews}: A falta de cuenta oficial del piloto vencedor de la carrera, la cuenta más exitosa que publica noticias sobre él gana protagonismo.
+	\item \textit{@ausgrandprix}: La cuenta oficial del Gran Premio de Australia. Se celebró allí y obviamente es muy mencionada pero no tanto como la propia cuenta oficial de la Fórmula 1.
+	\item Cuentas de pilotos y equipos: En especial pilotos que tuvieron protagonismo durante la carrera, ya que otros, como Felipe Massa que, pese a lograr una buena posición, tuvo una carrera aburrida con pocas batallas en pista muestra un verde más pálido que equipos como Red Bull, Force India, Toro Rosso o McLaren y sus pilotos que animaron más la carrera.
+\end{itemize}
+
+\section{Resultados}
+
+\subsection{Resultados obtenidos}
+
+Una vez analizada la red social, volvemos a hacernos la pregunta que se planteó en la Sección \ref{sec:intro}: \textit{¿Qué tipo de aficionado es el mayoritario, el neutral que menciona a más de un piloto o escudería o el fanático que solo menciona a un piloto o escudería?}
+\\ \\
+Si primasen los usuarios fanáticos habríamos encontrado comunidades alrededor de cada piloto, sin embargo, solo encontramos una alrededor de Checo Pérez. Además, vimos como el nodo con mayor grado de entrada es el de la cuenta oficial de la escudería Ferrari, la cuál ganó la carrera. Esto nos hace pensar que los aficionados, mayoritariamente no son fanáticos de un único piloto, o al menos no lo demuestran en las redes sociales.
+\\ \\
+Cuando se analizaron los actores principales nos aparecieron los siguientes cuando se usaba el vector propio:
+
+\begin{itemize}
+	\item \textit{@scuderiaferrari}: Principal protagonista de la carrera.
+	\item \textit{@f1}: Cuenta oficial de la Fórmula 1.
+	\item \textit{@mercedesamgf1}: La escudería favorita para que uno de sus pilotos ganase la carrera y acabó derrotada obteniendo un segundo y tercer puesto para sus pilotos que supo a poco.
+	\item \textit{@valteribottas}: Debutó con Mercedes e hizo una carrera sólida donde no pudo pasar del tercer puesto.
+	\item \textit{@lewishamilton}: Perdió la carrera por culpa de un error de su equipo.
+	\item \textit{@oconesteban}: En su debut a los volantes de un Force India logró acabar entre los diez primeros.
+	\item \textit{@ausgrandprix}: Cuenta oficial del Gran Premio de Fórmula 1 de Australia.
+	\item \textit{@sebvettelnews}: Cuenta que publica noticias sobre Sebastian Vettel, el cual ganó la carrera y, al no tener cuenta oficial, esta cuenta se vio beneficiada llevándose muchas menciones dirigidas hacia el piloto alemán.
+	\item \textit{@danielricciardo}: No logró acabar la carrera lo que supuso una decepción, pues aspiraba al podio.
+	\item \textit{@redbullracing}: Se esperaba que fuesen los principales rivales de Mercedes, pero se vieron superados por Ferrari en este primer asalto de la temporada.
+\end{itemize}
+
+Como podemos ver, los pilotos y escuderías que hay entre los diez actores principales coinciden con los principales protagonistas de la carrera lo cual responde a la segunda parte de la pregunta que se lanzó en la Sección \ref{sec:intro}: \textit{¿coincidirán los actores principales con los protagonistas de la carrera?}
+
+\subsection{Comparación con otras redes sociales}
+
+Las redes sociales que hemos visto en clase son:
+
+\begin{itemize}
+	\item Compañeras de mesa residencia femenina
+	\item Club de kárate de Zachary
+	\item Primera temporada de juego de tronos
+	\item Elecciones generales 20D 2015
+\end{itemize}
+
+Por lo que lo primero que se va a hacer es una tabla (Tabla \ref{tab:comparacion-medidas}) con sus valores de medidas como se hizo para nuestra red en la Sección \ref{sec:medidas}:
+
+\begin{table}[H]
+	\centering
+	\caption{Comparativa de valores de las medidas de análisis de nuestra red social con las vistas en clase}
+	\label{tab:comparacion-medidas}
+	\begin{tabular}{| l | l l l l l|}
+		\hline
+		Medida    & AusGP & Dining & Zachary & T1 JdT & 20D 2015 \\ 
+		\hline
+		Dirigido  & Sí    & Sí     & No      & No     & Sí       \\
+		$N$       & 532   & 26     & 34      & 120    & 1807     \\
+		$L$       & 1783  & 52     & 78      & 317    & 8639     \\
+		$D$       & 0,006 & 0,08   & 0,139   & 0,044  & 0,003    \\
+		$k$       & 3,352 & 2      & 2,294   & 5,283  & 4,781    \\
+		$d_{max}$ & 4     & 7      & 3       & 7      & 18       \\
+		$d$       & 1,189 & 2,839  & 1,274   & 3,307  & 5,386    \\
+		$C$       & 0,131 & 0,069  & 0,285   & 0,604  & 0,293    \\
+		\hline
+	\end{tabular}
+\end{table}
+
+En cuanto a tamaño de red no hay ninguna que se le asemeje. Las primeras al ser de grupos sociales cerrados tienen un tamaño muy reducido, y la de las elecciones contiene muchos más tuits que los que yo pude recopilar. No obstante, al ser ambas extraidas de twitter tienen en común la baja densidad, aún menor en la de las elecciones que en la nuestra.
+\\ \\
+En cuanto a grado, la más parecida es la de las elecciones (un grado algo mayor) y la del club de kárate (un grado algo menor).
+\\ \\
+En distancia media y diámetro la que más se asemeja es la del club de kárate y en coeficiente de clustering se vuelven a repetir las de las elecciones y la de kárate como las más parecidas.
+\\ \\
+Por tanto vemos que las más parecidas son tanto la de las elecciones, que en lo que más difiere es en las distancias y la de kárate que difiere bastante en la topología de la red ya que es mucho más pequeña y no es dirigida.
+
+
+
+
